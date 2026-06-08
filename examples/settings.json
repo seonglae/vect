@@ -1,0 +1,20 @@
+{
+  "defaultAgent": "claude-code",
+  "defaultMode": "collab",
+  "defaultCollabStrategy": "shared_and_room",
+  "theme": "paper",
+  "darkMode": "system",
+  "autoAnswerCandidates": true,
+  "toolOutputFolded": true,
+  "toolOutputMaxHeight": 192,
+  "customSlashCommands": [
+    { "command": "/test", "template": "Run pnpm test and report failures inline.", "category": "Custom" },
+    { "command": "/review", "template": "Review the last commit. Look for bugs, perf issues, and style violations.", "category": "Custom" }
+  ],
+  "keybindings": {
+    "command-palette": "Cmd+K",
+    "quick-switcher": "Cmd+J",
+    "project-switcher": "Cmd+Shift+J",
+    "toggle-dark": "Ctrl+Shift+L"
+  }
+}

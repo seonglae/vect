@@ -1,0 +1,40 @@
+name: Install / launch issue
+description: Vect fails to install or launch
+labels: ["install"]
+body:
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - macOS (Apple Silicon)
+        - macOS (Intel)
+        - Linux x86_64
+        - Linux ARM
+        - Windows x86_64
+    validations:
+      required: true
+  - type: dropdown
+    id: method
+    attributes:
+      label: Install method
+      options:
+        - curl install.sh
+        - Homebrew cask
+        - install.ps1 (Windows)
+        - winget
+        - Manual download (.dmg / .deb / .AppImage / .msi)
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output / error
+      description: Exact stderr or installer dialog text. Quote OS-level messages verbatim.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: workaround
+    attributes:
+      label: What you have tried

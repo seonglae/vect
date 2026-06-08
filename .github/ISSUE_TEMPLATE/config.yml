@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Source code issues
+    url: https://github.com/seonglae/vect/issues
+    about: Issues in the open-source library (@vect/shared, @vect/ui, @vect/core, vect-core crate) go to the source repo.
+  - name: Security vulnerability
+    url: https://github.com/seonglae/vect-app/security/advisories/new
+    about: Report privately via Security Advisories. Do not open a public issue.

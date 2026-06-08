@@ -1,0 +1,1 @@
+© Seonglae Cho. All rights reserved. The Vect desktop binaries distributed from this repository are licensed for end-user use only. Source code is available separately at [seonglae/vect](https://github.com/seonglae/vect) under the MIT License.

@@ -1,0 +1,67 @@
+name: Bug report
+description: Report a defect in the Vect desktop app
+labels: ["bug"]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Vect version
+      description: From the About dialog (or `vect --version`)
+      placeholder: 0.2.0
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - macOS (Apple Silicon)
+        - macOS (Intel)
+        - Linux x86_64
+        - Linux ARM
+        - Windows x86_64
+    validations:
+      required: true
+  - type: input
+    id: os-version
+    attributes:
+      label: OS version
+      placeholder: macOS 15.2 / Ubuntu 24.04 / Windows 11 23H2
+    validations:
+      required: true
+  - type: textarea
+    id: agents
+    attributes:
+      label: Agent CLIs installed
+      description: Output of `which claude codex gemini opencode openclaw 2>/dev/null` plus their versions
+      render: shell
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+      description: Numbered steps. Smaller is better.
+      placeholder: |
+        1. Open Vect
+        2. Cmd+N, select Claude
+        3. Type "foo"
+        4. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: From `~/.vect/app.log` (last 50 lines around the issue) or DevTools console
+      render: shell
