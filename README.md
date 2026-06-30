@@ -1,10 +1,10 @@
 # Vect
 
-<img src="https://raw.githubusercontent.com/seonglae/vect/main/apps/desktop/src-tauri/icons/icon.png" width="80" alt="Vect" />
+<img src="https://raw.githubusercontent.com/seonglae/vect/main/.github/icon.png" width="80" alt="Vect" />
 
 **AI-native IDE.** Local-first. Wraps Claude Code, Codex, Gemini, OpenCode, OpenClaw under one shell.
 
-<img src="./demo.gif" />
+<img src="https://github.com/user-attachments/assets/1e9c53bb-8817-4dfb-8cce-ff8669eac0a8" width="910" alt="Vect screenshot" />
 
 ## Install
 
