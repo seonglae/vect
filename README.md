@@ -4,13 +4,13 @@
 
 **AI-native IDE.** Local-first. Wraps Claude Code, Codex, Gemini, OpenCode, OpenClaw under one shell.
 
-<img src="https://github.com/user-attachments/assets/1e9c53bb-8817-4dfb-8cce-ff8669eac0a8" width="910" alt="Vect screenshot" />
+<img src="https://raw.githubusercontent.com/seonglae/vect/main/.github/screenshot.png" width="910" alt="Vect screenshot" />
 
 ## Install
 
 **macOS / Linux**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/seonglae/vect-app/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/seonglae/vect/main/scripts/install.sh | bash
 ```
 
 **Homebrew (macOS)**
@@ -20,10 +20,10 @@ brew install --cask seonglae/tap/vect
 
 **Windows**
 ```powershell
-irm https://raw.githubusercontent.com/seonglae/vect-app/main/scripts/install.ps1 | iex
+irm https://raw.githubusercontent.com/seonglae/vect/main/scripts/install.ps1 | iex
 ```
 
-**Manual** — grab platform installer from [releases](https://github.com/seonglae/vect-app/releases/latest).
+**Manual** — grab platform installer from [releases](https://github.com/seonglae/vect/releases/latest).
 
 ## Features
 
@@ -41,7 +41,7 @@ See [plugins/](./plugins) for curated skills, hooks, and extensions.
 
 ## Bug reports
 
-Open an [issue](https://github.com/seonglae/vect-app/issues/new/choose).
+Open an [issue](https://github.com/seonglae/vect/issues/new/choose).
 
 ## Source
 
