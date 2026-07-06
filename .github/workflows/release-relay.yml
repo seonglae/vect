@@ -1,15 +1,19 @@
 name: Release relay
 
-# Triggered when a release is published in the source repo seonglae/vect.
-# The source repo's release.yml uploads platform binaries to its own GitHub
-# release; this workflow mirrors that release into vect-app's releases page so
-# end users install from vect-app rather than the source repo.
+# Triggered when a release is published in the private source repo
+# seonglae/vect-src. Its release.yml builds platform binaries, uploads them to
+# a draft release there, then fires a repository_dispatch here so this
+# workflow mirrors the release into this public repo's releases page, where
+# end users install from.
+#
+# Requires the SOURCE_REPO_TOKEN secret (PAT with repo scope on
+# seonglae/vect-src) since the source repo is private.
 
 on:
   workflow_dispatch:
     inputs:
       source_tag:
-        description: Tag in seonglae/vect to mirror (e.g. v0.2.0)
+        description: Tag in seonglae/vect-src to mirror (e.g. v0.2.0)
         required: true
   repository_dispatch:
     types: [vect-release-published]
@@ -30,22 +34,22 @@ jobs:
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
       - name: Download source release artifacts
         env:
-          GH_TOKEN: ${{ secrets.SOURCE_REPO_TOKEN || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.SOURCE_REPO_TOKEN }}
         run: |
           mkdir -p artifacts
           gh release download "${{ steps.tag.outputs.tag }}" \
-            --repo seonglae/vect \
+            --repo seonglae/vect-src \
             --dir artifacts \
             --pattern '*.dmg' --pattern '*.deb' --pattern '*.AppImage' --pattern '*.msi' --pattern '*.exe' --pattern '*.app.tar.gz' \
             || echo "Some assets missing — continuing with what was downloaded"
           ls -la artifacts
       - name: Pull release notes from source repo CHANGELOG
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.SOURCE_REPO_TOKEN }}
         run: |
           VERSION="${{ steps.tag.outputs.tag }}"
           VERSION="${VERSION#v}"
-          gh api repos/seonglae/vect/contents/CHANGELOG.md --jq '.content' | base64 -d > /tmp/source-changelog.md
+          gh api repos/seonglae/vect-src/contents/CHANGELOG.md --jq '.content' | base64 -d > /tmp/source-changelog.md
           awk -v ver="$VERSION" '
             $0 ~ "^## \\[" ver "\\]" { inblock = 1; next }
             inblock && /^## \[/ { inblock = 0 }
