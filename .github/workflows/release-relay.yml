@@ -6,6 +6,11 @@ name: Release relay
 # workflow mirrors the release into this public repo's releases page, where
 # end users install from.
 #
+# Also generates latest.json (the tauri updater manifest) from the mirrored
+# updater artifacts (*.app.tar.gz / *.AppImage / *-setup.exe + their minisign
+# .sig files) so installed apps self-update via
+# https://github.com/seonglae/vect/releases/latest/download/latest.json.
+#
 # Requires the SOURCE_REPO_TOKEN secret (PAT with repo scope on
 # seonglae/vect-src) since the source repo is private.
 
@@ -40,7 +45,7 @@ jobs:
           gh release download "${{ steps.tag.outputs.tag }}" \
             --repo seonglae/vect-src \
             --dir artifacts \
-            --pattern '*.dmg' --pattern '*.deb' --pattern '*.AppImage' --pattern '*.msi' --pattern '*.exe' --pattern '*.app.tar.gz' \
+            --pattern '*.dmg' --pattern '*.deb' --pattern '*.AppImage' --pattern '*.msi' --pattern '*.exe' --pattern '*.app.tar.gz' --pattern '*.sig' \
             || echo "Some assets missing — continuing with what was downloaded"
           ls -la artifacts
       - name: Pull release notes from source repo CHANGELOG
@@ -56,6 +61,28 @@ jobs:
             inblock { print }
           ' /tmp/source-changelog.md > /tmp/release-body.md
           if [ ! -s /tmp/release-body.md ]; then echo "See assets below." > /tmp/release-body.md; fi
+      - name: Generate updater manifest (latest.json)
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          VERSION="${TAG#v}"
+          BASE="https://github.com/${{ github.repository }}/releases/download/${TAG}"
+          PUB_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          platform_entry() {
+            local file="$1"
+            if [ -z "$file" ] || [ ! -f "$file" ] || [ ! -f "$file.sig" ]; then return 0; fi
+            local name
+            name="$(basename "$file")"
+            jq -n --arg sig "$(cat "$file.sig")" --arg url "$BASE/$name" \
+              '{signature: $sig, url: $url}'
+          }
+          MAC="$(platform_entry "$(ls artifacts/*.app.tar.gz 2>/dev/null | head -1)")"
+          LINUX="$(platform_entry "$(ls artifacts/*.AppImage 2>/dev/null | head -1)")"
+          WIN="$(platform_entry "$(ls artifacts/*-setup.exe 2>/dev/null | head -1)")"
+          jq -n --arg version "$VERSION" --arg pub_date "$PUB_DATE" \
+            --argjson mac "${MAC:-null}" --argjson linux "${LINUX:-null}" --argjson win "${WIN:-null}" \
+            '{version: $version, pub_date: $pub_date, platforms: ({"darwin-aarch64": $mac, "linux-x86_64": $linux, "windows-x86_64": $win} | with_entries(select(.value != null)))}' \
+            > artifacts/latest.json
+          cat artifacts/latest.json
       - name: Create mirrored release
         uses: softprops/action-gh-release@v2
         with:
