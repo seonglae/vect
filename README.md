@@ -6,7 +6,7 @@
 
 Coding is one of the things it is for. Writing and research sessions use the same surface.
 
-<img src="https://raw.githubusercontent.com/seonglae/vect/main/.github/screenshot.png" width="910" alt="Vect screenshot" />
+<img src="https://raw.githubusercontent.com/seonglae/vect/main/docs/vect-app.webp" width="910" alt="The Vect desktop app" />
 
 ## Install
 
