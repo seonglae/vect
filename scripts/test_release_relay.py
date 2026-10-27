@@ -80,10 +80,7 @@ class ReleaseRelayTests(unittest.TestCase):
                 self.assertEqual(output, '')
 
     def test_untrusted_expressions_are_only_passed_as_data(self):
-        runs = re.findall(r'(?m)^        run: \|\n((?:^          .*\n|^\n)+)', WORKFLOW)
-        self.assertEqual(len(runs), 4)
-        for source in runs:
-            self.assertNotIn('${{', source)
+        self.assertExpressionsOnlyAsData(WORKFLOW)
         self.assertIn(f'          SOURCE_TAG: {INPUT}\n', step('Resolve source tag'))
         self.assertNotIn('secrets.', step('Resolve source tag'))
         self.assertTrue(WORKFLOW.split('    steps:\n', 1)[1].startswith('      - name: Resolve source tag\n'))
@@ -121,6 +118,26 @@ class ReleaseRelayTests(unittest.TestCase):
                     'signature': 'test-signature',
                     'url': f'https://github.com/seonglae/vect/releases/download/{tag}/{name}',
                 })
+
+    def assertExpressionsOnlyAsData(self, workflow):
+        # Every line, whatever form a run: takes: an expression may only be the whole value of an
+        # env or with key, where it is handed over as data and never read by a shell.
+        allowed = re.compile(r'^ {10}(SOURCE_TAG|TAG|GH_TOKEN|GITHUB_TOKEN|tag_name|name): (Vect )?\$\{\{ [^}]+ \}\}$')
+        for line in workflow.splitlines():
+            if '${{' in line:
+                self.assertRegex(line, allowed)
+
+    def test_an_expression_inlined_in_any_run_form_is_caught(self):
+        step = '      - name: Create mirrored release\n'
+        for inlined in (
+            '      - name: Announce\n        run: echo "Mirroring ${{ github.event.client_payload.tag }}"\n',
+            '      - name: Announce\n        run: |-\n          echo "Mirroring ${{ github.event.client_payload.tag }}"\n',
+        ):
+            with self.subTest(inlined=inlined):
+                altered = WORKFLOW.replace(step, inlined + step, 1)
+                self.assertNotEqual(altered, WORKFLOW)
+                with self.assertRaises(AssertionError):
+                    self.assertExpressionsOnlyAsData(altered)
 
 
 if __name__ == '__main__':
