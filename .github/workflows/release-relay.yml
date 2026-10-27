@@ -30,19 +30,25 @@ jobs:
   mirror:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
       - name: Resolve source tag
         id: tag
+        env:
+          SOURCE_TAG: ${{ github.event.inputs.source_tag || github.event.client_payload.tag }}
+        shell: bash
         run: |
-          TAG="${{ github.event.inputs.source_tag || github.event.client_payload.tag }}"
-          if [ -z "$TAG" ]; then echo "No source_tag provided"; exit 1; fi
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          # Validate before writing workflow outputs or using release credentials.
+          if [[ ! "$SOURCE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$ ]]; then
+            printf '::error::Expected a version tag such as v0.3.5 or v0.3.5-rc.1\n' >&2
+            exit 1
+          fi
+          printf 'tag=%s\n' "$SOURCE_TAG" >> "$GITHUB_OUTPUT"
       - name: Download source release artifacts
         env:
           GH_TOKEN: ${{ secrets.SOURCE_REPO_TOKEN }}
+          TAG: ${{ steps.tag.outputs.tag }}
         run: |
           mkdir -p artifacts
-          gh release download "${{ steps.tag.outputs.tag }}" \
+          gh release download "$TAG" \
             --repo seonglae/vect-src \
             --dir artifacts \
             --pattern '*.dmg' --pattern '*.deb' --pattern '*.AppImage' --pattern '*.msi' --pattern '*.exe' --pattern '*.app.tar.gz' --pattern '*.sig' \
@@ -51,9 +57,9 @@ jobs:
       - name: Pull release notes from source repo CHANGELOG
         env:
           GH_TOKEN: ${{ secrets.SOURCE_REPO_TOKEN }}
+          TAG: ${{ steps.tag.outputs.tag }}
         run: |
-          VERSION="${{ steps.tag.outputs.tag }}"
-          VERSION="${VERSION#v}"
+          VERSION="${TAG#v}"
           gh api repos/seonglae/vect-src/contents/CHANGELOG.md --jq '.content' | base64 -d > /tmp/source-changelog.md
           awk -v ver="$VERSION" '
             $0 ~ "^## \\[" ver "\\]" { inblock = 1; next }
@@ -62,10 +68,11 @@ jobs:
           ' /tmp/source-changelog.md > /tmp/release-body.md
           if [ ! -s /tmp/release-body.md ]; then echo "See assets below." > /tmp/release-body.md; fi
       - name: Generate updater manifest (latest.json)
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
         run: |
-          TAG="${{ steps.tag.outputs.tag }}"
           VERSION="${TAG#v}"
-          BASE="https://github.com/${{ github.repository }}/releases/download/${TAG}"
+          BASE="https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}"
           PUB_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           platform_entry() {
             local file="$1"
