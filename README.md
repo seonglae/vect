@@ -36,7 +36,6 @@ macOS builds are signed and notarized, and Vect keeps itself up to date from thi
 - **One window for the whole project.** A project opens as a single tab holding everything it needs: the conversation, your files, a terminal, a preview. Drag any pane onto the edge of another and it splits there. It opens as just the conversation, and the rest appears when you ask for it.
 - **A room, not one agent.** Put several agents on the same work and they claim a file before touching it, read what the others have already written, and merge changes that land at the same moment. It is the default, not an advanced setting.
 - **Agents can drive the app.** `vect mcp serve` hands any agent Vect itself as tools: reading and running things in the panel you are looking at, opening a page in the preview, starting and steering other agents. It can also read and write what the project remembers, and every change it makes is written down.
-- **Your phone as a second screen.** Scan a QR code and your phone is paired to the machine running your agents. Read along as they work, reply, and answer their questions from another room. iOS and Android, or any phone browser via `vect ui`.
 - **Session history that resumes.** Every local agent session, grouped by project, with full transcripts and one-click resume.
 - **Structured output.** Agents emit UI blocks (markdown, code, chart, table, form, image) instead of walls of text.
 - **Yours to shape.** Skill and context editor for CLAUDE.md, .ctx and memory; workflow engine, task board and audit timeline; themes and keybindings.
@@ -54,7 +53,6 @@ Everything is at [vectai.org/docs](https://vectai.org/docs).
 | [Workspaces](https://vectai.org/docs/workspaces) | One tab per project, panes docked where you want them. |
 | [Rooms](https://vectai.org/docs/rooms) | Several agents in one shared workspace without overwriting each other. |
 | [Tasks](https://vectai.org/docs/tasks) | Work items on a board, each carrying its own session. |
-| [Phone](https://vectai.org/docs/mobile) | Pairing a phone as a second screen onto the same agents. |
 | [Vect MCP server](https://vectai.org/docs/vect-mcp) | Letting an agent use Vect itself as a tool. |
 | [Agent providers](https://vectai.org/docs/agent-providers) | What each supported agent can and cannot do inside Vect. |
 | [CLI](https://vectai.org/docs/cli) | Every `vect` subcommand. |
