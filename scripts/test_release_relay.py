@@ -140,5 +140,15 @@ class ReleaseRelayTests(unittest.TestCase):
                     self.assertExpressionsOnlyAsData(altered)
 
 
+    def test_every_action_is_pinned_to_a_commit(self):
+        # A tag can be moved to other code; the relay holds a token that publishes releases.
+        pinned = re.compile(r'^\s*(- )?uses: [\w.-]+/[\w./-]+@[0-9a-f]{40} # v\d+(\.\d+)*$')
+        for path in sorted((ROOT / '.github/workflows').glob('*.yml')):
+            for line in path.read_text().splitlines():
+                if 'uses:' in line:
+                    with self.subTest(workflow=path.name, line=line.strip()):
+                        self.assertRegex(line, pinned)
+
+
 if __name__ == '__main__':
     unittest.main()
