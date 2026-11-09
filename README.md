@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/seonglae/vect/main/.github/icon.png" width="80" alt="Vect" />
 
-**AI-native IDE.** Local-first. One shell over Claude Code, Codex, OpenCode and Hermes.
+**AI-native IDE.** One shell over Claude Code, Codex, OpenCode and Hermes.
 
 Coding is one of the things it is for. Writing and research sessions use the same surface.
 
